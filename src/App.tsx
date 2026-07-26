@@ -19,7 +19,7 @@ const NTU_GRADES: Record<string, { points: number; remarks: string; emoji: strin
   'W':  { points: -1,   remarks: 'Withdrawn', emoji: '🚫' },
 };
 
-// --- NTU BS AI (2023-27) SCHEME OF STUDY ---
+// --- NTU BS AI (2026-30) SCHEME OF STUDY ---
 const NTU_SCHEME: Record<number, { name: string; cr: number }[]> = {
   1: [
     { name: 'Physics for Computing', cr: 2 },
