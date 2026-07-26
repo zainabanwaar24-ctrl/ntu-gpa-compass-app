@@ -290,16 +290,16 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#070b19] text-slate-100 p-4 md:p-8 font-sans print:bg-white print:text-black print:p-0">
+    <div className="min-h-screen bg-slate-950 text-blue-100 p-4 md:p-8 font-sans print:bg-white print:text-black print:p-0">
       <div className="max-w-6xl mx-auto space-y-8">
         
-        {/* Header - Academic Navy & Gold Theme */}
-        <header className="flex flex-col md:flex-row justify-between items-center bg-[#0d152d]/90 border border-amber-500/30 rounded-2xl p-6 shadow-2xl shadow-amber-500/5 print:bg-white print:border-b-2 print:border-slate-300 print:rounded-none print:shadow-none print:p-4">
+        {/* Header - Glassmorphism Blue Tint */}
+        <header className="flex flex-col md:flex-row justify-between items-center bg-blue-950/40 border border-blue-800/40 backdrop-blur-md rounded-2xl p-6 shadow-2xl print:bg-white print:border-b-2 print:border-slate-300 print:rounded-none print:shadow-none print:p-4">
           <div>
-            <h1 className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-amber-300 via-amber-400 to-yellow-500 bg-clip-text text-transparent flex items-center gap-2 print:text-blue-950 print:bg-none print:text-2xl">
+            <h1 className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-sky-400 via-indigo-300 to-blue-200 bg-clip-text text-transparent flex items-center gap-2 print:text-blue-950 print:bg-none print:text-2xl">
               🎓 NTU DCS Academic Compass
             </h1>
-            <p className="text-blue-200/70 text-xs mt-1 print:text-slate-700">
+            <p className="text-blue-200 text-xs mt-1 print:text-slate-700">
               National Textile University — Dept of Computer Science ({selectedProgram} - Batch 2025–29)
             </p>
           </div>
@@ -307,37 +307,37 @@ export function App() {
           <div className="flex items-center gap-4 mt-4 md:mt-0">
             <button
               onClick={handlePrintPDF}
-              className="bg-amber-500/10 hover:bg-amber-500/20 text-xs text-amber-300 border border-amber-500/40 px-3 py-2 rounded-xl flex items-center gap-1.5 transition font-medium print:hidden"
+              className="bg-sky-500/10 hover:bg-sky-500/20 text-xs text-sky-300 border border-sky-500/40 px-3 py-2 rounded-xl flex items-center gap-1.5 transition font-medium print:hidden"
             >
               <Printer className="w-4 h-4" /> Export PDF Summary
             </button>
             <button
               onClick={() => setShowGradingModal(true)}
-              className="bg-blue-950/80 hover:bg-blue-900 text-xs text-amber-300 border border-amber-500/30 px-3 py-2 rounded-xl flex items-center gap-1.5 transition print:hidden"
+              className="bg-blue-950/80 hover:bg-blue-900 text-xs text-sky-300 border border-blue-800/60 px-3 py-2 rounded-xl flex items-center gap-1.5 transition print:hidden"
             >
               <Eye className="w-4 h-4" /> View Scale
             </button>
             <div className="text-right">
-              <span className="text-xs text-blue-200/60 block print:text-slate-600">Current CGPA</span>
-              <span className="text-2xl font-bold text-amber-400 print:text-amber-700">{currentCGPA.toFixed(2)} / 4.00</span>
+              <span className="text-xs text-blue-300 block print:text-slate-600">Current CGPA</span>
+              <span className="text-2xl font-bold text-sky-400 print:text-sky-700">{currentCGPA.toFixed(2)} / 4.00</span>
             </div>
           </div>
         </header>
 
         {/* Degree & Scheme Selection Bar */}
-        <div className="bg-[#0d152d]/70 border border-blue-900/60 rounded-2xl p-6 space-y-4 print:bg-white print:border-none print:p-2">
+        <div className="bg-blue-950/40 border border-blue-800/40 backdrop-blur-md rounded-2xl p-6 space-y-4 print:bg-white print:border-none print:p-2">
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 print:hidden">
             
             {/* Degree Selector */}
             <div className="flex items-center gap-2">
-              <Layers className="w-5 h-5 text-amber-400 shrink-0" />
-              <span className="text-xs font-semibold text-blue-200">Degree Program:</span>
-              <div className="flex bg-[#0a1024] p-1 rounded-xl border border-blue-900/80">
+              <Layers className="w-5 h-5 text-sky-400 shrink-0" />
+              <span className="text-xs font-semibold text-blue-100">Degree Program:</span>
+              <div className="flex bg-slate-900 p-1 rounded-xl border border-blue-800/60">
                 {['BS AI', 'BS CS', 'BS SE'].map(prog => (
                   <button
                     key={prog}
                     onClick={() => handleProgramChange(prog)}
-                    className={`px-3 py-1 text-xs font-bold rounded-lg transition ${selectedProgram === prog ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-blue-950 font-extrabold shadow-md' : 'text-blue-300 hover:text-white'}`}
+                    className={`px-3 py-1 text-xs font-bold rounded-lg transition ${selectedProgram === prog ? 'bg-gradient-to-r from-sky-500 to-indigo-400 text-slate-950 shadow-md' : 'text-blue-300 hover:text-white'}`}
                   >
                     {prog}
                   </button>
@@ -347,16 +347,16 @@ export function App() {
 
             {/* Input Mode & Semester Loader */}
             <div className="flex flex-wrap items-center gap-3">
-              <div className="bg-[#0a1024] p-1 rounded-xl flex gap-1 text-xs border border-blue-900/80">
+              <div className="bg-slate-900 p-1 rounded-xl flex gap-1 text-xs border border-blue-800/60">
                 <button
                   onClick={() => setInputMode('grade')}
-                  className={`px-2.5 py-1 rounded-lg font-medium transition ${inputMode === 'grade' ? 'bg-amber-500 text-blue-950 font-bold' : 'text-blue-300'}`}
+                  className={`px-2.5 py-1 rounded-lg font-medium transition ${inputMode === 'grade' ? 'bg-sky-500 text-slate-950 font-bold' : 'text-blue-300'}`}
                 >
                   Grade Mode
                 </button>
                 <button
                   onClick={() => setInputMode('marks')}
-                  className={`px-2.5 py-1 rounded-lg font-medium transition ${inputMode === 'marks' ? 'bg-amber-500 text-blue-950 font-bold' : 'text-blue-300'}`}
+                  className={`px-2.5 py-1 rounded-lg font-medium transition ${inputMode === 'marks' ? 'bg-sky-500 text-slate-950 font-bold' : 'text-blue-300'}`}
                 >
                   Marks % Mode
                 </button>
@@ -365,7 +365,7 @@ export function App() {
               <select
                 value={selectedSem}
                 onChange={(e) => setSelectedSem(Number(e.target.value))}
-                className="bg-[#0a1024] border border-blue-900 rounded-xl px-3 py-1.5 text-xs text-amber-300 focus:outline-none"
+                className="bg-slate-900 border border-blue-800/60 rounded-xl px-3 py-1.5 text-xs text-sky-300 focus:outline-none"
               >
                 {[1, 2, 3, 4, 5, 6, 7, 8].map(s => (
                   <option key={s} value={s}>Semester {s}</option>
@@ -374,7 +374,7 @@ export function App() {
 
               <button
                 onClick={() => loadSemester(selectedProgram, selectedSem)}
-                className="bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-blue-950 text-xs font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-amber-500/20"
+                className="bg-gradient-to-r from-sky-500 to-indigo-400 hover:from-sky-400 hover:to-indigo-300 text-slate-950 text-xs font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-sky-500/20"
               >
                 <RefreshCw className="w-3.5 h-3.5" /> Load Scheme
               </button>
@@ -391,12 +391,12 @@ export function App() {
                 {courses.map((course) => {
                   const info = NTU_GRADES[course.grade] || NTU_GRADES['A'];
                   return (
-                    <div key={course.id} className="bg-[#0a1024]/80 border border-blue-900/40 rounded-xl p-3 flex justify-between items-center print:bg-white print:border-b print:border-slate-200 print:rounded-none print:p-1.5">
+                    <div key={course.id} className="bg-blue-950/30 border border-blue-800/30 rounded-xl p-3 flex justify-between items-center print:bg-white print:border-b print:border-slate-200 print:rounded-none print:p-1.5">
                       <div>
                         <p className="text-xs font-medium text-blue-100 print:text-slate-900 print:font-semibold">{course.name}</p>
                         <div className="flex items-center gap-2 mt-1 print:mt-0">
-                          <span className="text-[10px] text-blue-300/70 print:text-slate-600">{course.cr} Credit Hours</span>
-                          <span className="text-[10px] bg-[#0d152d] px-2 py-0.5 rounded text-amber-400 font-semibold border border-amber-500/20 print:hidden">
+                          <span className="text-[10px] text-blue-300 print:text-slate-600">{course.cr} Credit Hours</span>
+                          <span className="text-[10px] bg-slate-900 px-2 py-0.5 rounded text-yellow-300 font-semibold border border-blue-800 print:hidden">
                             {info.emoji} {info.remarks}
                           </span>
                         </div>
@@ -407,7 +407,7 @@ export function App() {
                           Grade: {course.grade} ({info.points >= 0 ? info.points.toFixed(2) : 'Excluded'})
                         </span>
                       ) : (
-                        <span className="hidden print:inline-block font-bold text-xs text-amber-800">
+                        <span className="hidden print:inline-block font-bold text-xs text-sky-800">
                           Marks: {course.marks || 80}% — Grade {course.grade}
                         </span>
                       )}
@@ -417,7 +417,7 @@ export function App() {
                           <select
                             value={course.grade}
                             onChange={(e) => updateGrade(course.id, e.target.value)}
-                            className="bg-[#0d152d] border border-amber-500/40 rounded-lg px-2 py-1 text-xs text-amber-400 font-bold"
+                            className="bg-slate-900 border border-blue-800 rounded-lg px-2 py-1 text-xs text-yellow-300 font-bold"
                           >
                             {Object.keys(NTU_GRADES).map(g => (
                               <option key={g} value={g}>{g} ({NTU_GRADES[g].points >= 0 ? NTU_GRADES[g].points : 'Excl.'})</option>
@@ -431,9 +431,9 @@ export function App() {
                               max="100"
                               value={course.marks || 80}
                               onChange={(e) => updateMarks(course.id, Number(e.target.value))}
-                              className="w-16 bg-[#0d152d] border border-amber-500/40 rounded-lg px-2 py-1 text-xs text-amber-400 font-bold text-center"
+                              className="w-16 bg-slate-900 border border-blue-800 rounded-lg px-2 py-1 text-xs text-sky-400 font-bold text-center"
                             />
-                            <span className="text-xs text-blue-300/70">%</span>
+                            <span className="text-xs text-blue-300">%</span>
                           </div>
                         )}
                       </div>
@@ -443,40 +443,40 @@ export function App() {
               </div>
             </div>
           ) : (
-            <p className="text-xs text-blue-300/60 text-center py-4 print:hidden">
+            <p className="text-xs text-blue-300 text-center py-4 print:hidden">
               Select a semester and click "Load Scheme" to display grades.
             </p>
           )}
 
           <button
             onClick={addCustomCourse}
-            className="text-xs text-amber-400 hover:text-amber-300 font-medium underline block pt-2 print:hidden"
+            className="text-xs text-sky-400 hover:text-sky-300 font-medium underline block pt-2 print:hidden"
           >
             + Add Custom Subject Manually
           </button>
         </div>
 
         {/* Visual CGPA Progress Analytics Curve */}
-        <div className="bg-[#0d152d]/90 border border-blue-900/60 rounded-2xl p-6 space-y-3 print:bg-white print:border-2 print:border-slate-300 print:p-4 print:mt-4">
+        <div className="bg-blue-950/40 border border-blue-800/40 backdrop-blur-md rounded-2xl p-6 space-y-3 print:bg-white print:border-2 print:border-slate-300 print:p-4 print:mt-4">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold text-blue-100 flex items-center gap-2 print:text-blue-950 print:font-bold">
-              <TrendingUp className="w-4 h-4 text-amber-400" /> Visual GPA Analytics Curve ({selectedProgram})
+              <TrendingUp className="w-4 h-4 text-sky-400" /> Visual GPA Analytics Curve ({selectedProgram})
             </h3>
-            <span className="text-xs text-blue-300/70 print:text-slate-600">Active Semester: S{selectedSem}</span>
+            <span className="text-xs text-blue-300 print:text-slate-600">Active Semester: S{selectedSem}</span>
           </div>
 
-          <div className="grid grid-cols-8 gap-2 pt-4 items-end h-28 border-b border-blue-900/60 pb-2 print:border-slate-300">
+          <div className="grid grid-cols-8 gap-2 pt-4 items-end h-28 border-b border-blue-800/40 pb-2 print:border-slate-300">
             {[1, 2, 3, 4, 5, 6, 7, 8].map(s => {
               const semGPA = s === selectedSem ? currentCGPA : (s < selectedSem ? (currentCGPA - 0.1).toFixed(2) : 0);
               const heightPercent = Math.min(100, (Number(semGPA) / 4.0) * 100);
               return (
                 <div key={s} className="flex flex-col items-center gap-1 h-full justify-end">
-                  <span className="text-[10px] text-amber-300 font-bold print:text-blue-950">{Number(semGPA) > 0 ? Number(semGPA).toFixed(1) : '-'}</span>
+                  <span className="text-[10px] text-yellow-300 font-bold print:text-blue-950">{Number(semGPA) > 0 ? Number(semGPA).toFixed(1) : '-'}</span>
                   <div
                     style={{ height: `${heightPercent}%` }}
-                    className={`w-full rounded-t-md transition-all duration-500 ${s === selectedSem ? 'bg-gradient-to-t from-amber-600 to-yellow-400 shadow-lg shadow-amber-500/20 print:bg-amber-500' : s < selectedSem ? 'bg-blue-900/80 print:bg-slate-400' : 'bg-blue-950/40 print:bg-slate-200'}`}
+                    className={`w-full rounded-t-md transition-all duration-500 ${s === selectedSem ? 'bg-gradient-to-t from-sky-500 to-indigo-400 shadow-lg shadow-sky-500/20 print:bg-sky-500' : s < selectedSem ? 'bg-blue-800 print:bg-slate-400' : 'bg-blue-950/40 print:bg-slate-200'}`}
                   ></div>
-                  <span className="text-[10px] text-blue-300/60 print:text-slate-700 font-semibold">S{s}</span>
+                  <span className="text-[10px] text-blue-300 print:text-slate-700 font-semibold">S{s}</span>
                 </div>
               );
             })}
@@ -487,31 +487,31 @@ export function App() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 print:hidden">
           
           {/* Target Predictor Card */}
-          <div className="bg-[#0d152d]/90 border border-blue-900/60 rounded-2xl p-6 space-y-4">
-            <h2 className="text-base font-semibold text-amber-300 flex items-center gap-2">
-              <Calculator className="w-5 h-5 text-amber-400" /> Target CGPA Predictor ({selectedProgram})
+          <div className="bg-blue-950/40 border border-blue-800/40 backdrop-blur-md rounded-2xl p-6 space-y-4">
+            <h2 className="text-base font-semibold text-blue-100 flex items-center gap-2">
+              <Calculator className="w-5 h-5 text-sky-400" /> Target CGPA Predictor ({selectedProgram})
             </h2>
 
             <div className="space-y-3">
               <div>
-                <label className="text-xs text-blue-300/70">Target Graduation CGPA</label>
+                <label className="text-xs text-blue-300">Target Graduation CGPA</label>
                 <input
                   type="number"
                   step="0.01"
                   value={targetCGPA}
                   onChange={(e) => setTargetCGPA(Number(e.target.value))}
-                  className="w-full bg-[#0a1024] border border-blue-900/80 rounded-xl p-2.5 text-amber-300 text-sm mt-1 focus:border-amber-500"
+                  className="w-full bg-slate-900 border border-blue-800 rounded-xl p-2.5 text-yellow-300 text-sm mt-1 focus:border-sky-500"
                 />
               </div>
-              <div className="flex justify-between text-xs text-blue-300/70 pt-1">
+              <div className="flex justify-between text-xs text-blue-300 pt-1">
                 <span>Remaining Credits: <strong className="text-blue-100">{remainingCredits} CR</strong></span>
                 <span>Graduation Target: <strong className="text-blue-100">133 CR</strong></span>
               </div>
             </div>
 
-            <div className="p-4 bg-[#0a1024]/60 border border-blue-900/40 rounded-xl space-y-2">
-              <span className="text-xs text-blue-300/70">Required Future Average GPA:</span>
-              <div className="text-2xl font-black text-amber-400">
+            <div className="p-4 bg-slate-900/60 border border-blue-800/40 rounded-xl space-y-2">
+              <span className="text-xs text-blue-300">Required Future Average GPA:</span>
+              <div className="text-2xl font-black text-sky-400">
                 {requiredGPA > 4.0 ? (
                   <span className="text-rose-400 text-sm flex items-center gap-1">🚨 Mathematically Impossible (&gt;4.00)</span>
                 ) : (
@@ -538,24 +538,24 @@ export function App() {
             </div>
           </div>
 
-          {/* AI Advisor Panel */}
-          <div className="bg-[#0d152d]/90 border border-blue-900/60 rounded-2xl p-6 space-y-4">
+          {/* AI Advisor Panel - Neon Yellow for AI */}
+          <div className="bg-blue-950/40 border border-blue-800/40 backdrop-blur-md rounded-2xl p-6 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-amber-500/10 text-amber-400 rounded-xl border border-amber-500/20">
+              <div className="p-2 bg-yellow-400/10 text-yellow-300 rounded-xl border border-yellow-400/20">
                 <Bot className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-base font-semibold text-white flex items-center gap-2">
-                  Compass AI Advisor <Sparkles className="w-4 h-4 text-amber-400" />
+                <h3 className="text-base font-semibold text-blue-100 flex items-center gap-2">
+                  Compass AI Advisor <Sparkles className="w-4 h-4 text-yellow-300" />
                 </h3>
-                <p className="text-xs text-blue-300/70">Customized for {selectedProgram} (Batch 2025–29)</p>
+                <p className="text-xs text-blue-300">Customized for {selectedProgram} (Batch 2025–29)</p>
               </div>
             </div>
 
             <button
               onClick={getAIAdvice}
               disabled={loading}
-              className="w-full py-3 px-4 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-blue-950 font-bold rounded-xl transition shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full py-3 px-4 bg-gradient-to-r from-sky-500 to-indigo-400 hover:from-sky-400 hover:to-indigo-300 text-slate-950 font-bold rounded-xl transition shadow-lg shadow-sky-500/20 flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {loading ? (
                 <>
@@ -578,9 +578,9 @@ export function App() {
             )}
 
             {advice && (
-              <div className="p-4 bg-[#0a1024] border border-amber-500/30 rounded-xl text-blue-100 text-xs leading-relaxed space-y-2">
-                <div className="font-semibold text-amber-400 text-[10px] uppercase tracking-wider">Advisor Notes ({selectedProgram}):</div>
-                <div className="whitespace-pre-line">{advice}</div>
+              <div className="p-4 bg-slate-900 border border-yellow-400/30 rounded-xl text-blue-100 text-xs leading-relaxed space-y-2">
+                <div className="font-semibold text-yellow-300 text-[10px] uppercase tracking-wider">Advisor Notes ({selectedProgram}):</div>
+                <div className="whitespace-pre-line text-blue-100">{advice}</div>
               </div>
             )}
           </div>
@@ -590,14 +590,14 @@ export function App() {
         {/* NTU Grading Policy Modal */}
         {showGradingModal && (
           <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 print:hidden">
-            <div className="bg-[#0d152d] border border-amber-500/30 rounded-2xl max-w-2xl w-full p-6 space-y-4 max-h-[85vh] overflow-y-auto">
-              <div className="flex justify-between items-center border-b border-blue-900 pb-3">
-                <h3 className="text-lg font-bold text-amber-300 flex items-center gap-2">
-                  <Award className="w-5 h-5 text-amber-400" /> Official NTU Grading Policy
+            <div className="bg-slate-900 border border-blue-800 rounded-2xl max-w-2xl w-full p-6 space-y-4 max-h-[85vh] overflow-y-auto">
+              <div className="flex justify-between items-center border-b border-blue-800/60 pb-3">
+                <h3 className="text-lg font-bold text-sky-300 flex items-center gap-2">
+                  <Award className="w-5 h-5 text-sky-400" /> Official NTU Grading Policy
                 </h3>
                 <button
                   onClick={() => setShowGradingModal(false)}
-                  className="p-1 hover:bg-blue-900 rounded-lg text-blue-300 hover:text-white"
+                  className="p-1 hover:bg-slate-800 rounded-lg text-blue-300 hover:text-white"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -605,16 +605,16 @@ export function App() {
 
               <table className="w-full text-xs text-left text-blue-100 border-collapse">
                 <thead>
-                  <tr className="bg-[#0a1024] text-amber-300 border-b border-blue-900">
+                  <tr className="bg-slate-950 text-sky-300 border-b border-blue-800">
                     <th className="p-2">Letter Grade</th>
                     <th className="p-2">Grade Point</th>
                     <th className="p-2">Remarks</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-blue-900/60">
+                <tbody className="divide-y divide-blue-900/40">
                   {Object.keys(NTU_GRADES).map(g => (
-                    <tr key={g} className="hover:bg-blue-900/30">
-                      <td className="p-2 font-bold text-amber-400">{g}</td>
+                    <tr key={g} className="hover:bg-blue-950/50">
+                      <td className="p-2 font-bold text-yellow-300">{g}</td>
                       <td className="p-2">{NTU_GRADES[g].points >= 0 ? NTU_GRADES[g].points.toFixed(2) : 'Excluded'}</td>
                       <td className="p-2">{NTU_GRADES[g].emoji} {NTU_GRADES[g].remarks}</td>
                     </tr>
