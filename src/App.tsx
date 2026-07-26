@@ -1,7 +1,25 @@
 import React, { useState } from 'react';
-import { Bot, Sparkles, AlertCircle, Loader2, BookOpen, Calculator, Award, GraduationCap, CheckCircle, RefreshCw } from 'lucide-react';
+import { Bot, Sparkles, AlertCircle, Loader2, BookOpen, Calculator, Award, GraduationCap, RefreshCw, Eye, X } from 'lucide-react';
 
-// --- NTU BS AI SCHEME DATA ---
+// --- OFFICIAL NTU GRADING POLICY DATA WITH EMOJIS ---
+const NTU_GRADES: Record<string, { points: number; remarks: string; emoji: string }> = {
+  'A+': { points: 4.00, remarks: 'Exceptional', emoji: '🏆' },
+  'A':  { points: 4.00, remarks: 'Outstanding', emoji: '⭐' },
+  'A-': { points: 3.66, remarks: 'Excellent', emoji: '🌟' },
+  'B+': { points: 3.33, remarks: 'Very Good', emoji: '👍' },
+  'B':  { points: 3.00, remarks: 'Good', emoji: '✅' },
+  'B-': { points: 2.66, remarks: 'Good Above', emoji: '👌' },
+  'C+': { points: 2.33, remarks: 'Average', emoji: '⚖️' },
+  'C':  { points: 2.00, remarks: 'Satisfactory', emoji: '🙂' },
+  'C-': { points: 1.66, remarks: 'Pass', emoji: '📈' },
+  'D+': { points: 1.33, remarks: 'Low Pass', emoji: '⚠️' },
+  'D':  { points: 1.00, remarks: 'Marginal Pass', emoji: '🛑' },
+  'F':  { points: 0.00, remarks: 'Fail', emoji: '❌' },
+  'I':  { points: -1,   remarks: 'Incomplete', emoji: '⏳' },
+  'W':  { points: -1,   remarks: 'Withdrawn', emoji: '🚫' },
+};
+
+// --- NTU BS AI (2023-27) SCHEME OF STUDY ---
 const NTU_SCHEME: Record<number, { name: string; cr: number }[]> = {
   1: [
     { name: 'Physics for Computing', cr: 2 },
@@ -92,37 +110,49 @@ const NTU_SCHEME: Record<number, { name: string; cr: number }[]> = {
   ]
 };
 
-const GRADE_POINTS: Record<string, number> = {
-  'A+': 4.0, 'A': 4.0, 'A-': 3.66,
-  'B+': 3.33, 'B': 3.0, 'B-': 2.66,
-  'C+': 2.33, 'C': 2.0, 'C-': 1.66,
-  'D+': 1.33, 'D': 1.0, 'F': 0.0,
-  'I': -1, 'W': -1
-};
-
 interface Course {
   id: string;
   name: string;
   cr: number;
   grade: string;
+  marks?: number;
 }
 
 export function App() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [targetCGPA, setTargetCGPA] = useState<number>(3.5);
   const [selectedSem, setSelectedSem] = useState<number>(1);
+  const [showGradingModal, setShowGradingModal] = useState<boolean>(false);
+  const [inputMode, setInputMode] = useState<'grade' | 'marks'>('grade');
+
   const [advice, setAdvice] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Load NTU Scheme
+  // Auto-map Marks % to Grade
+  const getGradeFromMarks = (marks: number): string => {
+    if (marks >= 90) return 'A+';
+    if (marks >= 85) return 'A';
+    if (marks >= 80) return 'A-';
+    if (marks >= 75) return 'B+';
+    if (marks >= 71) return 'B';
+    if (marks >= 68) return 'B-';
+    if (marks >= 64) return 'C+';
+    if (marks >= 61) return 'C';
+    if (marks >= 58) return 'C-';
+    if (marks >= 54) return 'D+';
+    if (marks >= 50) return 'D';
+    return 'F';
+  };
+
   const loadSemester = (semNum: number) => {
     const semCourses = NTU_SCHEME[semNum] || [];
     const newCourses = semCourses.map((c, i) => ({
       id: `${semNum}-${i}-${Date.now()}`,
       name: c.name,
       cr: c.cr,
-      grade: 'A'
+      grade: 'A',
+      marks: 88
     }));
     setCourses(newCourses);
   };
@@ -131,14 +161,19 @@ export function App() {
     setCourses(courses.map(c => c.id === id ? { ...c, grade: newGrade } : c));
   };
 
+  const updateMarks = (id: string, marksVal: number) => {
+    const mappedGrade = getGradeFromMarks(marksVal);
+    setCourses(courses.map(c => c.id === id ? { ...c, marks: marksVal, grade: mappedGrade } : c));
+  };
+
   const addCustomCourse = () => {
-    setCourses([...courses, { id: `${Date.now()}`, name: 'New Course', cr: 3, grade: 'A' }]);
+    setCourses([...courses, { id: `${Date.now()}`, name: 'Custom Subject', cr: 3, grade: 'A', marks: 85 }]);
   };
 
   // Calculations
   const validCourses = courses.filter(c => c.cr > 0 && c.grade !== 'I' && c.grade !== 'W');
   const totalEarnedCredits = validCourses.reduce((sum, c) => sum + c.cr, 0);
-  const totalQualityPoints = validCourses.reduce((sum, c) => sum + (c.cr * (GRADE_POINTS[c.grade] || 0)), 0);
+  const totalQualityPoints = validCourses.reduce((sum, c) => sum + (c.cr * (NTU_GRADES[c.grade]?.points || 0)), 0);
   const currentCGPA = totalEarnedCredits > 0 ? totalQualityPoints / totalEarnedCredits : 0;
 
   const totalGraduationCredits = 133;
@@ -151,11 +186,10 @@ export function App() {
     setLoading(true);
     setError(null);
 
-    // Supports both VITE_GROQ_API_KEY and VITE_GEMINI_API_KEY
     const apiKey = import.meta.env.VITE_GROQ_API_KEY || import.meta.env.VITE_GEMINI_API_KEY;
 
     if (!apiKey) {
-      setError("Groq API key is missing. Set VITE_GROQ_API_KEY or VITE_GEMINI_API_KEY in Vercel settings.");
+      setError("API Key missing. Please set VITE_GROQ_API_KEY in Vercel.");
       setLoading(false);
       return;
     }
@@ -172,11 +206,11 @@ export function App() {
           messages: [
             {
               role: 'system',
-              content: `You are 'Compass AI', an academic advisor for National Textile University (NTU) BS AI students. Give 3 short, encouraging study tips under 150 words based on transcript standing.`
+              content: `You are 'Compass AI', an academic advisor for National Textile University (NTU) BS AI students. Give 3 actionable, empathetic study tips under 150 words based on current CGPA and target.`
             },
             {
               role: 'user',
-              content: `My Current CGPA is ${currentCGPA.toFixed(2)}, Target is ${targetCGPA.toFixed(2)}, Remaining Credits: ${remainingCredits}, Required Future GPA: ${requiredGPA.toFixed(2)}.`
+              content: `Current CGPA: ${currentCGPA.toFixed(2)}, Target CGPA: ${targetCGPA.toFixed(2)}, Remaining Credits: ${remainingCredits}, Required Future GPA: ${requiredGPA.toFixed(2)}.`
             }
           ],
           temperature: 0.7,
@@ -192,7 +226,7 @@ export function App() {
       const data = await response.json();
       setAdvice(data.choices[0]?.message?.content || 'No advice received.');
     } catch (err: any) {
-      setError(err.message || 'Failed to connect to AI Advisor.');
+      setError(err.message || 'Failed to generate advice.');
     } finally {
       setLoading(false);
     }
@@ -214,29 +248,47 @@ export function App() {
           </div>
 
           <div className="flex items-center gap-4 mt-4 md:mt-0">
+            <button
+              onClick={() => setShowGradingModal(true)}
+              className="bg-slate-800 hover:bg-slate-700 text-xs text-indigo-300 border border-indigo-500/30 px-3 py-2 rounded-xl flex items-center gap-1.5 transition"
+            >
+              <Eye className="w-4 h-4" /> View NTU Scale
+            </button>
             <div className="text-right">
               <span className="text-xs text-slate-400 block">Current CGPA</span>
               <span className="text-2xl font-bold text-emerald-400">{currentCGPA.toFixed(2)}</span>
             </div>
-            <div className="text-right">
-              <span className="text-xs text-slate-400 block">Credits Earned</span>
-              <span className="text-2xl font-bold text-indigo-400">{totalEarnedCredits} CR</span>
-            </div>
           </div>
         </header>
 
-        {/* Course Scheme Loader */}
+        {/* Course Scheme Loader & Toggle */}
         <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-4">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-2">
               <BookOpen className="w-5 h-5 text-indigo-400" />
               <h2 className="text-base font-semibold">Load NTU BS AI Semester Courses</h2>
             </div>
+            
             <div className="flex items-center gap-3">
+              <div className="bg-slate-800 p-1 rounded-xl flex gap-1 text-xs">
+                <button
+                  onClick={() => setInputMode('grade')}
+                  className={`px-3 py-1 rounded-lg font-medium transition ${inputMode === 'grade' ? 'bg-indigo-600 text-white' : 'text-slate-400'}`}
+                >
+                  Grade Mode
+                </button>
+                <button
+                  onClick={() => setInputMode('marks')}
+                  className={`px-3 py-1 rounded-lg font-medium transition ${inputMode === 'marks' ? 'bg-indigo-600 text-white' : 'text-slate-400'}`}
+                >
+                  Marks % Mode
+                </button>
+              </div>
+
               <select
                 value={selectedSem}
                 onChange={(e) => setSelectedSem(Number(e.target.value))}
-                className="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500"
+                className="bg-slate-800 border border-slate-700 rounded-xl px-3 py-1.5 text-sm text-white focus:outline-none"
               >
                 {[1, 2, 3, 4, 5, 6, 7, 8].map(s => (
                   <option key={s} value={s}>Semester {s}</option>
@@ -244,33 +296,56 @@ export function App() {
               </select>
               <button
                 onClick={() => loadSemester(selectedSem)}
-                className="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium px-4 py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-indigo-500/20"
+                className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-indigo-500/20"
               >
-                <RefreshCw className="w-4 h-4" /> Load Courses
+                <RefreshCw className="w-3.5 h-3.5" /> Load
               </button>
             </div>
           </div>
 
-          {/* Courses List */}
+          {/* Courses Grid */}
           {courses.length > 0 && (
             <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
-              {courses.map((course) => (
-                <div key={course.id} className="bg-slate-800/60 border border-slate-700/50 rounded-xl p-3 flex justify-between items-center">
-                  <div>
-                    <p className="text-xs font-medium text-slate-200">{course.name}</p>
-                    <span className="text-[10px] text-slate-400">{course.cr} Credit Hours</span>
+              {courses.map((course) => {
+                const info = NTU_GRADES[course.grade] || NTU_GRADES['A'];
+                return (
+                  <div key={course.id} className="bg-slate-800/60 border border-slate-700/50 rounded-xl p-3 flex justify-between items-center">
+                    <div>
+                      <p className="text-xs font-medium text-slate-200">{course.name}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-[10px] text-slate-400">{course.cr} CR</span>
+                        <span className="text-[10px] bg-slate-900/80 px-2 py-0.5 rounded text-amber-300 font-semibold border border-slate-700">
+                          {info.emoji} {info.remarks}
+                        </span>
+                      </div>
+                    </div>
+
+                    {inputMode === 'grade' ? (
+                      <select
+                        value={course.grade}
+                        onChange={(e) => updateGrade(course.id, e.target.value)}
+                        className="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-amber-400 font-bold"
+                      >
+                        {Object.keys(NTU_GRADES).map(g => (
+                          <option key={g} value={g}>{g} ({NTU_GRADES[g].points >= 0 ? NTU_GRADES[g].points : 'Excl.'})</option>
+                        ))}
+                      </select>
+                    ) : (
+                      <div className="flex items-center gap-1">
+                        <input
+                          type="number"
+                          min="0"
+                          max="100"
+                          value={course.marks || 80}
+                          onChange={(e) => updateMarks(course.id, Number(e.target.value))}
+                          className="w-16 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-emerald-400 font-bold text-center"
+                        />
+                        <span className="text-xs text-slate-400">%</span>
+                      </div>
+                    )}
                   </div>
-                  <select
-                    value={course.grade}
-                    onChange={(e) => updateGrade(course.id, e.target.value)}
-                    className="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-amber-400 font-bold"
-                  >
-                    {Object.keys(GRADE_POINTS).map(g => (
-                      <option key={g} value={g}>{g}</option>
-                    ))}
-                  </select>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
 
@@ -278,7 +353,7 @@ export function App() {
             onClick={addCustomCourse}
             className="text-xs text-indigo-400 hover:text-indigo-300 font-medium underline block pt-2"
           >
-            + Add Custom Subject Manually
+            + Add Custom Subject
           </button>
         </div>
 
@@ -304,17 +379,34 @@ export function App() {
               </div>
               <div className="flex justify-between text-xs text-slate-400 pt-1">
                 <span>Remaining Credits: <strong className="text-slate-200">{remainingCredits} CR</strong></span>
-                <span>Graduation Total: <strong className="text-slate-200">133 CR</strong></span>
+                <span>Graduation Target: <strong className="text-slate-200">133 CR</strong></span>
               </div>
             </div>
 
-            <div className="p-4 bg-slate-800/40 border border-slate-700/50 rounded-xl space-y-1">
+            <div className="p-4 bg-slate-800/40 border border-slate-700/50 rounded-xl space-y-2">
               <span className="text-xs text-slate-400">Required Future Average GPA:</span>
               <div className="text-2xl font-black text-indigo-400">
                 {requiredGPA > 4.0 ? (
-                  <span className="text-rose-400 text-lg">🚨 Mathematically Impossible (&gt;4.0)</span>
+                  <span className="text-rose-400 text-sm flex items-center gap-1">🚨 Mathematically Impossible (&gt;4.00)</span>
                 ) : (
                   <span>{requiredGPA.toFixed(2)} / 4.00</span>
+                )}
+              </div>
+
+              {/* Status Badge */}
+              <div className="pt-2">
+                {requiredGPA <= 3.5 ? (
+                  <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs px-2.5 py-1 rounded-lg font-medium inline-block">
+                    🎉 Achievable Target
+                  </span>
+                ) : requiredGPA <= 4.0 ? (
+                  <span className="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs px-2.5 py-1 rounded-lg font-medium inline-block">
+                    🔥 Challenging Target
+                  </span>
+                ) : (
+                  <span className="bg-rose-500/10 text-rose-400 border border-rose-500/20 text-xs px-2.5 py-1 rounded-lg font-medium inline-block">
+                    🚨 Target Exceeds Max GPA Limit
+                  </span>
                 )}
               </div>
             </div>
@@ -368,6 +460,44 @@ export function App() {
           </div>
 
         </div>
+
+        {/* NTU Grading Policy Table Modal */}
+        {showGradingModal && (
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 space-y-4 max-h-[85vh] overflow-y-auto">
+              <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                  <Award className="w-5 h-5 text-indigo-400" /> Official NTU Grading Policy
+                </h3>
+                <button
+                  onClick={() => setShowGradingModal(false)}
+                  className="p-1 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <table className="w-full text-xs text-left text-slate-300 border-collapse">
+                <thead>
+                  <tr className="bg-slate-800/80 text-slate-400 border-b border-slate-700">
+                    <th className="p-2">Letter Grade</th>
+                    <th className="p-2">Grade Point</th>
+                    <th className="p-2">Remarks</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800">
+                  {Object.keys(NTU_GRADES).map(g => (
+                    <tr key={g} className="hover:bg-slate-800/40">
+                      <td className="p-2 font-bold text-amber-400">{g}</td>
+                      <td className="p-2">{NTU_GRADES[g].points >= 0 ? NTU_GRADES[g].points.toFixed(2) : 'Excluded'}</td>
+                      <td className="p-2">{NTU_GRADES[g].emoji} {NTU_GRADES[g].remarks}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
 
       </div>
     </div>
