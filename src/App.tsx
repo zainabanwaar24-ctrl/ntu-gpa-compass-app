@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Bot, Sparkles, AlertCircle, Loader2, BookOpen, Calculator, Award, GraduationCap, RefreshCw, Eye, X, Layers, Printer, TrendingUp, Download } from 'lucide-react';
+import { Bot, Sparkles, AlertCircle, Loader2, BookOpen, Calculator, Award, GraduationCap, RefreshCw, Eye, X, Layers, Printer, TrendingUp } from 'lucide-react';
 
 // --- OFFICIAL NTU GRADING POLICY DATA ---
 const NTU_GRADES: Record<string, { points: number; remarks: string; emoji: string }> = {
@@ -233,7 +233,7 @@ export function App() {
   const neededPoints = (targetCGPA * totalGraduationCredits) - totalQualityPoints;
   const requiredGPA = remainingCredits > 0 ? Math.max(0, neededPoints / remainingCredits) : 0;
 
-  // Print Transcript PDF Feature
+  // Print Clean PDF Summary
   const handlePrintPDF = () => {
     window.print();
   };
@@ -290,42 +290,42 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 p-4 md:p-8 font-sans print:bg-white print:text-black">
+    <div className="min-h-screen bg-slate-950 text-slate-100 p-4 md:p-8 font-sans print:bg-white print:text-black print:p-0">
       <div className="max-w-6xl mx-auto space-y-8">
         
         {/* Header */}
-        <header className="flex flex-col md:flex-row justify-between items-center bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-2xl print:bg-transparent print:border-none">
+        <header className="flex flex-col md:flex-row justify-between items-center bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-2xl print:bg-white print:border-b-2 print:border-slate-300 print:rounded-none print:shadow-none print:p-4">
           <div>
-            <h1 className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent flex items-center gap-2 print:text-black print:bg-none">
-              🎓 NTU DCS Academic Compass
+            <h1 className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent flex items-center gap-2 print:text-indigo-900 print:bg-none print:text-2xl">
+              🎓 NTU DCS Official Transcript Summary
             </h1>
-            <p className="text-slate-400 text-xs mt-1 print:text-gray-700">
-              National Textile University — Dept of Computer Science (Batch 2025–29)
+            <p className="text-slate-400 text-xs mt-1 print:text-slate-700">
+              National Textile University — Dept of Computer Science ({selectedProgram} - Batch 2025–29)
             </p>
           </div>
 
-          <div className="flex items-center gap-4 mt-4 md:mt-0 print:hidden">
+          <div className="flex items-center gap-4 mt-4 md:mt-0">
             <button
               onClick={handlePrintPDF}
-              className="bg-indigo-600/20 hover:bg-indigo-600/30 text-xs text-indigo-300 border border-indigo-500/40 px-3 py-2 rounded-xl flex items-center gap-1.5 transition font-medium"
+              className="bg-indigo-600/20 hover:bg-indigo-600/30 text-xs text-indigo-300 border border-indigo-500/40 px-3 py-2 rounded-xl flex items-center gap-1.5 transition font-medium print:hidden"
             >
               <Printer className="w-4 h-4" /> Export PDF Summary
             </button>
             <button
               onClick={() => setShowGradingModal(true)}
-              className="bg-slate-800 hover:bg-slate-700 text-xs text-indigo-300 border border-indigo-500/30 px-3 py-2 rounded-xl flex items-center gap-1.5 transition"
+              className="bg-slate-800 hover:bg-slate-700 text-xs text-indigo-300 border border-indigo-500/30 px-3 py-2 rounded-xl flex items-center gap-1.5 transition print:hidden"
             >
               <Eye className="w-4 h-4" /> View Scale
             </button>
             <div className="text-right">
-              <span className="text-xs text-slate-400 block">Current CGPA</span>
-              <span className="text-2xl font-bold text-emerald-400">{currentCGPA.toFixed(2)}</span>
+              <span className="text-xs text-slate-400 block print:text-slate-600">Current CGPA</span>
+              <span className="text-2xl font-bold text-emerald-400 print:text-emerald-700">{currentCGPA.toFixed(2)} / 4.00</span>
             </div>
           </div>
         </header>
 
         {/* Degree & Scheme Selection Bar */}
-        <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-4 print:border-gray-300">
+        <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-4 print:bg-white print:border-none print:p-2">
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 print:hidden">
             
             {/* Degree Selector */}
@@ -381,50 +381,71 @@ export function App() {
             </div>
           </div>
 
-          {/* Courses Grid */}
-          {courses.length > 0 && (
-            <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
-              {courses.map((course) => {
-                const info = NTU_GRADES[course.grade] || NTU_GRADES['A'];
-                return (
-                  <div key={course.id} className="bg-slate-800/60 border border-slate-700/50 rounded-xl p-3 flex justify-between items-center print:bg-gray-100 print:text-black">
-                    <div>
-                      <p className="text-xs font-medium text-slate-200 print:text-black">{course.name}</p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-[10px] text-slate-400 print:text-gray-600">{course.cr} CR</span>
-                        <span className="text-[10px] bg-slate-900/80 px-2 py-0.5 rounded text-amber-300 font-semibold border border-slate-700 print:text-black">
-                          {info.emoji} {info.remarks}
+          {/* Courses Grid - ONLY LOADED/ENTERED COURSES SHOW IN PRINT */}
+          {courses.length > 0 ? (
+            <div className="space-y-2">
+              <h3 className="hidden print:block text-sm font-bold text-slate-800 border-b pb-1 mb-2">
+                Loaded Semester {selectedSem} Course Results ({selectedProgram})
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 print:grid-cols-1 print:gap-1.5">
+                {courses.map((course) => {
+                  const info = NTU_GRADES[course.grade] || NTU_GRADES['A'];
+                  return (
+                    <div key={course.id} className="bg-slate-800/60 border border-slate-700/50 rounded-xl p-3 flex justify-between items-center print:bg-white print:border-b print:border-slate-200 print:rounded-none print:p-1.5">
+                      <div>
+                        <p className="text-xs font-medium text-slate-200 print:text-slate-900 print:font-semibold">{course.name}</p>
+                        <div className="flex items-center gap-2 mt-1 print:mt-0">
+                          <span className="text-[10px] text-slate-400 print:text-slate-600">{course.cr} Credit Hours</span>
+                          <span className="text-[10px] bg-slate-900/80 px-2 py-0.5 rounded text-amber-300 font-semibold border border-slate-700 print:hidden">
+                            {info.emoji} {info.remarks}
+                          </span>
+                        </div>
+                      </div>
+
+                      {inputMode === 'grade' ? (
+                        <span className="hidden print:inline-block font-bold text-xs text-indigo-900">
+                          Grade: {course.grade} ({info.points >= 0 ? info.points.toFixed(2) : 'Excluded'})
                         </span>
+                      ) : (
+                        <span className="hidden print:inline-block font-bold text-xs text-emerald-800">
+                          Marks: {course.marks || 80}% — Grade {course.grade}
+                        </span>
+                      )}
+
+                      <div className="print:hidden">
+                        {inputMode === 'grade' ? (
+                          <select
+                            value={course.grade}
+                            onChange={(e) => updateGrade(course.id, e.target.value)}
+                            className="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-amber-400 font-bold"
+                          >
+                            {Object.keys(NTU_GRADES).map(g => (
+                              <option key={g} value={g}>{g} ({NTU_GRADES[g].points >= 0 ? NTU_GRADES[g].points : 'Excl.'})</option>
+                            ))}
+                          </select>
+                        ) : (
+                          <div className="flex items-center gap-1">
+                            <input
+                              type="number"
+                              min="0"
+                              max="100"
+                              value={course.marks || 80}
+                              onChange={(e) => updateMarks(course.id, Number(e.target.value))}
+                              className="w-16 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-emerald-400 font-bold text-center"
+                            />
+                            <span className="text-xs text-slate-400">%</span>
+                          </div>
+                        )}
                       </div>
                     </div>
-
-                    {inputMode === 'grade' ? (
-                      <select
-                        value={course.grade}
-                        onChange={(e) => updateGrade(course.id, e.target.value)}
-                        className="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-amber-400 font-bold print:bg-white print:text-black"
-                      >
-                        {Object.keys(NTU_GRADES).map(g => (
-                          <option key={g} value={g}>{g} ({NTU_GRADES[g].points >= 0 ? NTU_GRADES[g].points : 'Excl.'})</option>
-                        ))}
-                      </select>
-                    ) : (
-                      <div className="flex items-center gap-1">
-                        <input
-                          type="number"
-                          min="0"
-                          max="100"
-                          value={course.marks || 80}
-                          onChange={(e) => updateMarks(course.id, Number(e.target.value))}
-                          className="w-16 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-emerald-400 font-bold text-center print:bg-white print:text-black"
-                        />
-                        <span className="text-xs text-slate-400">%</span>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
+          ) : (
+            <p className="text-xs text-slate-400 text-center py-4 print:hidden">
+              Select a semester and click "Load Scheme" to display grades.
+            </p>
           )}
 
           <button
@@ -435,35 +456,35 @@ export function App() {
           </button>
         </div>
 
-        {/* Feature 5: Visual CGPA Progress Analytics Bar */}
-        <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-3">
+        {/* Feature 5: Visual CGPA Progress Analytics Graph (INCLUDED IN PRINT) */}
+        <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-3 print:bg-white print:border-2 print:border-slate-300 print:p-4 print:mt-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-white flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-emerald-400" /> Visual GPA Analytics Curve ({selectedProgram})
+            <h3 className="text-sm font-semibold text-white flex items-center gap-2 print:text-indigo-950 print:font-bold">
+              <TrendingUp className="w-4 h-4 text-emerald-400 print:text-indigo-600" /> Visual GPA Analytics Curve ({selectedProgram})
             </h3>
-            <span className="text-xs text-slate-400">Semester 1 to 8 Progress</span>
+            <span className="text-xs text-slate-400 print:text-slate-600">Active Semester: S{selectedSem}</span>
           </div>
 
-          <div className="grid grid-cols-8 gap-2 pt-4 items-end h-28 border-b border-slate-800 pb-2">
+          <div className="grid grid-cols-8 gap-2 pt-4 items-end h-28 border-b border-slate-800 pb-2 print:border-slate-300">
             {[1, 2, 3, 4, 5, 6, 7, 8].map(s => {
               const semGPA = s === selectedSem ? currentCGPA : (s < selectedSem ? (currentCGPA - 0.1).toFixed(2) : 0);
               const heightPercent = Math.min(100, (Number(semGPA) / 4.0) * 100);
               return (
                 <div key={s} className="flex flex-col items-center gap-1 h-full justify-end">
-                  <span className="text-[10px] text-indigo-300 font-bold">{Number(semGPA) > 0 ? Number(semGPA).toFixed(1) : '-'}</span>
+                  <span className="text-[10px] text-indigo-300 font-bold print:text-indigo-900">{Number(semGPA) > 0 ? Number(semGPA).toFixed(1) : '-'}</span>
                   <div
                     style={{ height: `${heightPercent}%` }}
-                    className={`w-full rounded-t-md transition-all duration-500 ${s === selectedSem ? 'bg-gradient-to-t from-indigo-600 to-purple-500 shadow-lg shadow-indigo-500/30' : s < selectedSem ? 'bg-slate-700' : 'bg-slate-800/40'}`}
+                    className={`w-full rounded-t-md transition-all duration-500 ${s === selectedSem ? 'bg-gradient-to-t from-indigo-600 to-purple-500 shadow-lg shadow-indigo-500/30 print:bg-indigo-600' : s < selectedSem ? 'bg-slate-700 print:bg-slate-400' : 'bg-slate-800/40 print:bg-slate-200'}`}
                   ></div>
-                  <span className="text-[10px] text-slate-500">S{s}</span>
+                  <span className="text-[10px] text-slate-500 print:text-slate-700 font-semibold">S{s}</span>
                 </div>
               );
             })}
           </div>
         </div>
 
-        {/* Predictor & AI Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Predictor & AI Section (HIDDEN IN PRINT TO KEEP REPORT CLEAN) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 print:hidden">
           
           {/* Target Predictor Card */}
           <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-4">
@@ -534,7 +555,7 @@ export function App() {
             <button
               onClick={getAIAdvice}
               disabled={loading}
-              className="w-full py-3 px-4 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-medium rounded-xl transition shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2 disabled:opacity-50 print:hidden"
+              className="w-full py-3 px-4 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-medium rounded-xl transition shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {loading ? (
                 <>
@@ -568,7 +589,7 @@ export function App() {
 
         {/* NTU Grading Policy Modal */}
         {showGradingModal && (
-          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 print:hidden">
             <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 space-y-4 max-h-[85vh] overflow-y-auto">
               <div className="flex justify-between items-center border-b border-slate-800 pb-3">
                 <h3 className="text-lg font-bold text-white flex items-center gap-2">
