@@ -38,19 +38,19 @@ You are 'Compass AI', an expert Academic Advisor for National Textile University
 
 ---
 
-e. Tools, Services, and AI Models Used
+## e. Tools, Services, and AI Models Used
 
-Frontend Framework: React 18, TypeScript, Vite
+* **Frontend Framework:** React 18, TypeScript, Vite
 
-Styling & Theme: Tailwind CSS (Cold Slate & Cyberpunk Glassmorphic Blue Aesthetic)
+* **Styling & Theme:** Tailwind CSS (Cold Slate & Cyberpunk Glassmorphic Blue Aesthetic)
 
-Icons: Lucide React
+* **Icons:** Lucide React
 
-AI Engine & API: Groq Cloud API (Llama-3.3-70B-Versatile Model)
+* **AI Engine & API:** Groq Cloud API (Llama-3.3-70B-Versatile Model)
 
-Deployment Platform: Vercel Production Infrastructure
+* **Deployment Platform:** Vercel Production Infrastructure
 
-Version Control: Git & GitHub
+* **Version Control:** Git & GitHub
 
 
 f. Screenshots of the App in Action
@@ -68,3 +68,25 @@ Target CGPA Predictor & Visual Analytics Curve:
 Compass AI Advisor Recommendations:
 <img width="1850" height="847" alt="Screenshot (120)" src="https://github.com/user-attachments/assets/beb7585e-02a9-4bb9-abb9-409c876849f4" />
 
+g. How to Run the Project Locally
+Follow these steps to run the app on your local machine:
+
+Clone the Repository:
+
+Bash
+git clone [https://github.com/zainabanwaar24-ctrl/ntu-gpa-compass-app.git](https://github.com/zainabanwaar24-ctrl/ntu-gpa-compass-app.git)
+cd ntu-gpa-compass-app
+Install Dependencies:
+
+Bash
+npm install
+Configure Environment Variables:
+Create a .env file in the root directory and add your Groq API key:
+
+Code snippet
+VITE_GROQ_API_KEY=gsk_your_groq_api_key_here
+Start the Development Server:
+
+Bash
+npm run dev
+Open http://localhost:5173 in your browser.
