@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Bot, Sparkles, AlertCircle, Loader2, BookOpen, Calculator, Award, GraduationCap, RefreshCw, Eye, X, Layers } from 'lucide-react';
+import { Bot, Sparkles, AlertCircle, Loader2, BookOpen, Calculator, Award, GraduationCap, RefreshCw, Eye, X, Layers, Printer, TrendingUp, Download } from 'lucide-react';
 
 // --- OFFICIAL NTU GRADING POLICY DATA ---
 const NTU_GRADES: Record<string, { points: number; remarks: string; emoji: string }> = {
@@ -66,7 +66,6 @@ const NTU_PROGRAMS: Record<string, Record<number, { name: string; cr: number }[]
       { name: 'BS Final Project-II', cr: 4 }, { name: 'AI Elective VII', cr: 3 }, { name: 'Civics & Community Engagement', cr: 2 }, { name: 'Professional Practices', cr: 2 }, { name: 'Translation of Al-Quran-VIII', cr: 0 }
     ]
   },
-
   'BS CS': {
     1: [
       { name: 'Physics for Computing', cr: 2 }, { name: 'Physics for Computing LAB', cr: 1 },
@@ -112,7 +111,6 @@ const NTU_PROGRAMS: Record<string, Record<number, { name: string; cr: number }[]
       { name: 'BS Final Project-II', cr: 4 }, { name: 'CS Elective VII', cr: 3 }, { name: 'Civics & Community Engagement', cr: 2 }, { name: 'Professional Practices', cr: 2 }, { name: 'Translation of Al-Quran-VIII', cr: 0 }
     ]
   },
-
   'BS SE': {
     1: [
       { name: 'Physics for Computing', cr: 2 }, { name: 'Physics for Computing LAB', cr: 1 },
@@ -235,6 +233,11 @@ export function App() {
   const neededPoints = (targetCGPA * totalGraduationCredits) - totalQualityPoints;
   const requiredGPA = remainingCredits > 0 ? Math.max(0, neededPoints / remainingCredits) : 0;
 
+  // Print Transcript PDF Feature
+  const handlePrintPDF = () => {
+    window.print();
+  };
+
   // AI Advisor Call
   const getAIAdvice = async () => {
     setLoading(true);
@@ -287,26 +290,32 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 p-4 md:p-8 font-sans">
+    <div className="min-h-screen bg-slate-950 text-slate-100 p-4 md:p-8 font-sans print:bg-white print:text-black">
       <div className="max-w-6xl mx-auto space-y-8">
         
         {/* Header */}
-        <header className="flex flex-col md:flex-row justify-between items-center bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-2xl">
+        <header className="flex flex-col md:flex-row justify-between items-center bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-2xl print:bg-transparent print:border-none">
           <div>
-            <h1 className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent flex items-center gap-2">
+            <h1 className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent flex items-center gap-2 print:text-black print:bg-none">
               🎓 NTU DCS Academic Compass
             </h1>
-            <p className="text-slate-400 text-xs mt-1">
+            <p className="text-slate-400 text-xs mt-1 print:text-gray-700">
               National Textile University — Dept of Computer Science (Batch 2025–29)
             </p>
           </div>
 
-          <div className="flex items-center gap-4 mt-4 md:mt-0">
+          <div className="flex items-center gap-4 mt-4 md:mt-0 print:hidden">
+            <button
+              onClick={handlePrintPDF}
+              className="bg-indigo-600/20 hover:bg-indigo-600/30 text-xs text-indigo-300 border border-indigo-500/40 px-3 py-2 rounded-xl flex items-center gap-1.5 transition font-medium"
+            >
+              <Printer className="w-4 h-4" /> Export PDF Summary
+            </button>
             <button
               onClick={() => setShowGradingModal(true)}
               className="bg-slate-800 hover:bg-slate-700 text-xs text-indigo-300 border border-indigo-500/30 px-3 py-2 rounded-xl flex items-center gap-1.5 transition"
             >
-              <Eye className="w-4 h-4" /> View NTU Scale
+              <Eye className="w-4 h-4" /> View Scale
             </button>
             <div className="text-right">
               <span className="text-xs text-slate-400 block">Current CGPA</span>
@@ -316,8 +325,8 @@ export function App() {
         </header>
 
         {/* Degree & Scheme Selection Bar */}
-        <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-4">
-          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+        <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-4 print:border-gray-300">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 print:hidden">
             
             {/* Degree Selector */}
             <div className="flex items-center gap-2">
@@ -378,12 +387,12 @@ export function App() {
               {courses.map((course) => {
                 const info = NTU_GRADES[course.grade] || NTU_GRADES['A'];
                 return (
-                  <div key={course.id} className="bg-slate-800/60 border border-slate-700/50 rounded-xl p-3 flex justify-between items-center">
+                  <div key={course.id} className="bg-slate-800/60 border border-slate-700/50 rounded-xl p-3 flex justify-between items-center print:bg-gray-100 print:text-black">
                     <div>
-                      <p className="text-xs font-medium text-slate-200">{course.name}</p>
+                      <p className="text-xs font-medium text-slate-200 print:text-black">{course.name}</p>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="text-[10px] text-slate-400">{course.cr} CR</span>
-                        <span className="text-[10px] bg-slate-900/80 px-2 py-0.5 rounded text-amber-300 font-semibold border border-slate-700">
+                        <span className="text-[10px] text-slate-400 print:text-gray-600">{course.cr} CR</span>
+                        <span className="text-[10px] bg-slate-900/80 px-2 py-0.5 rounded text-amber-300 font-semibold border border-slate-700 print:text-black">
                           {info.emoji} {info.remarks}
                         </span>
                       </div>
@@ -393,7 +402,7 @@ export function App() {
                       <select
                         value={course.grade}
                         onChange={(e) => updateGrade(course.id, e.target.value)}
-                        className="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-amber-400 font-bold"
+                        className="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-amber-400 font-bold print:bg-white print:text-black"
                       >
                         {Object.keys(NTU_GRADES).map(g => (
                           <option key={g} value={g}>{g} ({NTU_GRADES[g].points >= 0 ? NTU_GRADES[g].points : 'Excl.'})</option>
@@ -407,7 +416,7 @@ export function App() {
                           max="100"
                           value={course.marks || 80}
                           onChange={(e) => updateMarks(course.id, Number(e.target.value))}
-                          className="w-16 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-emerald-400 font-bold text-center"
+                          className="w-16 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-emerald-400 font-bold text-center print:bg-white print:text-black"
                         />
                         <span className="text-xs text-slate-400">%</span>
                       </div>
@@ -420,10 +429,37 @@ export function App() {
 
           <button
             onClick={addCustomCourse}
-            className="text-xs text-indigo-400 hover:text-indigo-300 font-medium underline block pt-2"
+            className="text-xs text-indigo-400 hover:text-indigo-300 font-medium underline block pt-2 print:hidden"
           >
             + Add Custom Subject Manually
           </button>
+        </div>
+
+        {/* Feature 5: Visual CGPA Progress Analytics Bar */}
+        <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-3">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-emerald-400" /> Visual GPA Analytics Curve ({selectedProgram})
+            </h3>
+            <span className="text-xs text-slate-400">Semester 1 to 8 Progress</span>
+          </div>
+
+          <div className="grid grid-cols-8 gap-2 pt-4 items-end h-28 border-b border-slate-800 pb-2">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map(s => {
+              const semGPA = s === selectedSem ? currentCGPA : (s < selectedSem ? (currentCGPA - 0.1).toFixed(2) : 0);
+              const heightPercent = Math.min(100, (Number(semGPA) / 4.0) * 100);
+              return (
+                <div key={s} className="flex flex-col items-center gap-1 h-full justify-end">
+                  <span className="text-[10px] text-indigo-300 font-bold">{Number(semGPA) > 0 ? Number(semGPA).toFixed(1) : '-'}</span>
+                  <div
+                    style={{ height: `${heightPercent}%` }}
+                    className={`w-full rounded-t-md transition-all duration-500 ${s === selectedSem ? 'bg-gradient-to-t from-indigo-600 to-purple-500 shadow-lg shadow-indigo-500/30' : s < selectedSem ? 'bg-slate-700' : 'bg-slate-800/40'}`}
+                  ></div>
+                  <span className="text-[10px] text-slate-500">S{s}</span>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         {/* Predictor & AI Section */}
@@ -498,7 +534,7 @@ export function App() {
             <button
               onClick={getAIAdvice}
               disabled={loading}
-              className="w-full py-3 px-4 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-medium rounded-xl transition shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full py-3 px-4 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-medium rounded-xl transition shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2 disabled:opacity-50 print:hidden"
             >
               {loading ? (
                 <>
