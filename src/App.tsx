@@ -243,7 +243,7 @@ export function App() {
               🎓 NTU GPA Compass
             </h1>
             <p className="text-slate-400 text-xs mt-1">
-              National Textile University — BS AI (Batch 2023–27) Official Grading & Predictor
+              National Textile University — BS AI (Batch 2025–29) Official Grading & Predictor
             </p>
           </div>
 
