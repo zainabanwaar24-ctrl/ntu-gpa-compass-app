@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Bot, Sparkles, AlertCircle, Loader2, BookOpen, Calculator, Award, GraduationCap, RefreshCw, Eye, X } from 'lucide-react';
+import { Bot, Sparkles, AlertCircle, Loader2, BookOpen, Calculator, Award, GraduationCap, RefreshCw, Eye, X, Layers } from 'lucide-react';
 
-// --- OFFICIAL NTU GRADING POLICY DATA WITH EMOJIS ---
+// --- OFFICIAL NTU GRADING POLICY DATA ---
 const NTU_GRADES: Record<string, { points: number; remarks: string; emoji: string }> = {
   'A+': { points: 4.00, remarks: 'Exceptional', emoji: '🏆' },
   'A':  { points: 4.00, remarks: 'Outstanding', emoji: '⭐' },
@@ -19,95 +19,144 @@ const NTU_GRADES: Record<string, { points: number; remarks: string; emoji: strin
   'W':  { points: -1,   remarks: 'Withdrawn', emoji: '🚫' },
 };
 
-// --- NTU BS AI (2026-30) SCHEME OF STUDY ---
-const NTU_SCHEME: Record<number, { name: string; cr: number }[]> = {
-  1: [
-    { name: 'Physics for Computing', cr: 2 },
-    { name: 'Physics for Computing LAB', cr: 1 },
-    { name: 'Programming Fundamentals (PF)', cr: 3 },
-    { name: 'Programming Fundamentals LAB', cr: 1 },
-    { name: 'Functional English (FE)', cr: 3 },
-    { name: 'Introduction to ICT', cr: 2 },
-    { name: 'Introduction to ICT LAB', cr: 1 },
-    { name: 'Discrete Structures', cr: 3 },
-    { name: 'Translation of Al-Quran-I', cr: 0 },
-  ],
-  2: [
-    { name: 'Probability and Statistics', cr: 3 },
-    { name: 'Fundamentals of Management', cr: 2 },
-    { name: 'Database Systems', cr: 3 },
-    { name: 'Database Systems LAB', cr: 1 },
-    { name: 'Digital Logic Design (DLD)', cr: 2 },
-    { name: 'Digital Logic Design LAB', cr: 1 },
-    { name: 'Object Oriented Programming (OOP)', cr: 3 },
-    { name: 'Object Oriented Programming LAB', cr: 1 },
-    { name: 'Islamic Studies', cr: 2 },
-    { name: 'Translation of Al-Quran-II', cr: 0 },
-  ],
-  3: [
-    { name: 'Calculus and Analytic Geometry (CAG)', cr: 3 },
-    { name: 'Data Structures (DS)', cr: 3 },
-    { name: 'Data Structures LAB', cr: 1 },
-    { name: 'Data Communication and Networks', cr: 2 },
-    { name: 'Data Communication and Networks LAB', cr: 1 },
-    { name: 'Introduction to Artificial Intelligence', cr: 2 },
-    { name: 'Introduction to Artificial Intelligence LAB', cr: 1 },
-    { name: 'Software Engineering Fundamentals', cr: 3 },
-    { name: 'Translation of Al-Quran-III', cr: 0 },
-  ],
-  4: [
-    { name: 'Linear Algebra', cr: 3 },
-    { name: 'Programming for Artificial Intelligence', cr: 2 },
-    { name: 'Programming for Artificial Intelligence LAB', cr: 1 },
-    { name: 'Information Security', cr: 2 },
-    { name: 'Information Security LAB', cr: 1 },
-    { name: 'Computer Organization & Assembly Language', cr: 2 },
-    { name: 'Computer Organization & Assembly Language LAB', cr: 1 },
-    { name: 'Knowledge Representation and Reasoning', cr: 2 },
-    { name: 'Knowledge Representation and Reasoning LAB', cr: 1 },
-    { name: 'Expository Writing (EW)', cr: 3 },
-    { name: 'Translation of Al-Quran-IV', cr: 0 },
-  ],
-  5: [
-    { name: 'Multivariable Calculus', cr: 3 },
-    { name: 'Machine Learning', cr: 2 },
-    { name: 'Machine Learning LAB', cr: 1 },
-    { name: 'Operating Systems (OS)', cr: 2 },
-    { name: 'Operating Systems LAB', cr: 1 },
-    { name: 'Design and Analysis of Algorithms', cr: 3 },
-    { name: 'AI Elective I', cr: 3 },
-    { name: 'AI Elective II', cr: 3 },
-    { name: 'Translation of Al-Quran-V', cr: 0 },
-  ],
-  6: [
-    { name: 'Artificial Neural Networks & Deep Learning', cr: 2 },
-    { name: 'Artificial Neural Networks LAB', cr: 1 },
-    { name: 'Parallel and Distributed Computing', cr: 2 },
-    { name: 'Parallel and Distributed Computing LAB', cr: 1 },
-    { name: 'AI Elective III', cr: 3 },
-    { name: 'AI Elective IV', cr: 3 },
-    { name: 'Financial Accounting', cr: 3 },
-    { name: 'Introduction to Textiles', cr: 2 },
-    { name: 'Translation of Al-Quran-VI', cr: 0 },
-  ],
-  7: [
-    { name: 'BS Final Project-I (FYP-1)', cr: 2 },
-    { name: 'Computer Vision', cr: 2 },
-    { name: 'Computer Vision LAB', cr: 1 },
-    { name: 'AI Elective V', cr: 3 },
-    { name: 'AI Elective VI', cr: 3 },
-    { name: 'Technical and Business Writing', cr: 3 },
-    { name: 'Entrepreneurship', cr: 2 },
-    { name: 'Ideology and Constitution of Pakistan', cr: 2 },
-    { name: 'Translation of Al-Quran-VII', cr: 0 },
-  ],
-  8: [
-    { name: 'BS Final Project-II', cr: 4 },
-    { name: 'AI Elective VII', cr: 3 },
-    { name: 'Civics & Community Engagement', cr: 2 },
-    { name: 'Professional Practices', cr: 2 },
-    { name: 'Translation of Al-Quran-VIII', cr: 0 },
-  ]
+// --- NTU DEPARTMENT OF COMPUTER SCIENCE SCHEMES (BATCH 2025-29) ---
+const NTU_PROGRAMS: Record<string, Record<number, { name: string; cr: number }[]>> = {
+  'BS AI': {
+    1: [
+      { name: 'Physics for Computing', cr: 2 }, { name: 'Physics for Computing LAB', cr: 1 },
+      { name: 'Programming Fundamentals (PF)', cr: 3 }, { name: 'Programming Fundamentals LAB', cr: 1 },
+      { name: 'Functional English (FE)', cr: 3 }, { name: 'Introduction to ICT', cr: 2 },
+      { name: 'Introduction to ICT LAB', cr: 1 }, { name: 'Discrete Structures', cr: 3 }, { name: 'Translation of Al-Quran-I', cr: 0 }
+    ],
+    2: [
+      { name: 'Probability and Statistics', cr: 3 }, { name: 'Fundamentals of Management', cr: 2 },
+      { name: 'Database Systems', cr: 3 }, { name: 'Database Systems LAB', cr: 1 },
+      { name: 'Digital Logic Design (DLD)', cr: 2 }, { name: 'Digital Logic Design LAB', cr: 1 },
+      { name: 'Object Oriented Programming (OOP)', cr: 3 }, { name: 'Object Oriented Programming LAB', cr: 1 },
+      { name: 'Islamic Studies', cr: 2 }, { name: 'Translation of Al-Quran-II', cr: 0 }
+    ],
+    3: [
+      { name: 'Calculus and Analytic Geometry (CAG)', cr: 3 }, { name: 'Data Structures (DS)', cr: 3 },
+      { name: 'Data Structures LAB', cr: 1 }, { name: 'Data Communication and Networks', cr: 2 },
+      { name: 'Data Communication and Networks LAB', cr: 1 }, { name: 'Introduction to AI', cr: 2 },
+      { name: 'Introduction to AI LAB', cr: 1 }, { name: 'Software Engineering Fundamentals', cr: 3 }, { name: 'Translation of Al-Quran-III', cr: 0 }
+    ],
+    4: [
+      { name: 'Linear Algebra', cr: 3 }, { name: 'Programming for AI', cr: 2 }, { name: 'Programming for AI LAB', cr: 1 },
+      { name: 'Information Security', cr: 2 }, { name: 'Information Security LAB', cr: 1 },
+      { name: 'Computer Organization & Assembly Language', cr: 2 }, { name: 'Computer Organization & Assembly LAB', cr: 1 },
+      { name: 'Knowledge Representation and Reasoning', cr: 2 }, { name: 'Knowledge Representation LAB', cr: 1 },
+      { name: 'Expository Writing', cr: 3 }, { name: 'Translation of Al-Quran-IV', cr: 0 }
+    ],
+    5: [
+      { name: 'Multivariable Calculus', cr: 3 }, { name: 'Machine Learning', cr: 2 }, { name: 'Machine Learning LAB', cr: 1 },
+      { name: 'Operating Systems (OS)', cr: 2 }, { name: 'Operating Systems LAB', cr: 1 },
+      { name: 'Design and Analysis of Algorithms', cr: 3 }, { name: 'AI Elective I', cr: 3 }, { name: 'AI Elective II', cr: 3 }, { name: 'Translation of Al-Quran-V', cr: 0 }
+    ],
+    6: [
+      { name: 'Artificial Neural Networks & Deep Learning', cr: 2 }, { name: 'ANN & Deep Learning LAB', cr: 1 },
+      { name: 'Parallel and Distributed Computing', cr: 2 }, { name: 'Parallel Computing LAB', cr: 1 },
+      { name: 'AI Elective III', cr: 3 }, { name: 'AI Elective IV', cr: 3 }, { name: 'Financial Accounting', cr: 3 }, { name: 'Introduction to Textiles', cr: 2 }, { name: 'Translation of Al-Quran-VI', cr: 0 }
+    ],
+    7: [
+      { name: 'BS Final Project-I (FYP-1)', cr: 2 }, { name: 'Computer Vision', cr: 2 }, { name: 'Computer Vision LAB', cr: 1 },
+      { name: 'AI Elective V', cr: 3 }, { name: 'AI Elective VI', cr: 3 }, { name: 'Technical and Business Writing', cr: 3 }, { name: 'Entrepreneurship', cr: 2 }, { name: 'Ideology and Constitution of Pakistan', cr: 2 }, { name: 'Translation of Al-Quran-VII', cr: 0 }
+    ],
+    8: [
+      { name: 'BS Final Project-II', cr: 4 }, { name: 'AI Elective VII', cr: 3 }, { name: 'Civics & Community Engagement', cr: 2 }, { name: 'Professional Practices', cr: 2 }, { name: 'Translation of Al-Quran-VIII', cr: 0 }
+    ]
+  },
+
+  'BS CS': {
+    1: [
+      { name: 'Physics for Computing', cr: 2 }, { name: 'Physics for Computing LAB', cr: 1 },
+      { name: 'Programming Fundamentals (PF)', cr: 3 }, { name: 'Programming Fundamentals LAB', cr: 1 },
+      { name: 'Functional English (FE)', cr: 3 }, { name: 'Introduction to ICT', cr: 2 },
+      { name: 'Introduction to ICT LAB', cr: 1 }, { name: 'Discrete Structures', cr: 3 }, { name: 'Translation of Al-Quran-I', cr: 0 }
+    ],
+    2: [
+      { name: 'Probability and Statistics', cr: 3 }, { name: 'Fundamentals of Management', cr: 2 },
+      { name: 'Database Systems', cr: 3 }, { name: 'Database Systems LAB', cr: 1 },
+      { name: 'Digital Logic Design (DLD)', cr: 2 }, { name: 'Digital Logic Design LAB', cr: 1 },
+      { name: 'Object Oriented Programming (OOP)', cr: 3 }, { name: 'Object Oriented Programming LAB', cr: 1 },
+      { name: 'Islamic Studies', cr: 2 }, { name: 'Translation of Al-Quran-II', cr: 0 }
+    ],
+    3: [
+      { name: 'Calculus and Analytic Geometry (CAG)', cr: 3 }, { name: 'Data Structures (DS)', cr: 3 },
+      { name: 'Data Structures LAB', cr: 1 }, { name: 'Data Communication and Networks', cr: 2 },
+      { name: 'Data Communication and Networks LAB', cr: 1 }, { name: 'Computer Organization & Assembly Language', cr: 2 },
+      { name: 'Computer Organization & Assembly LAB', cr: 1 }, { name: 'Software Engineering Fundamentals', cr: 3 }, { name: 'Translation of Al-Quran-III', cr: 0 }
+    ],
+    4: [
+      { name: 'Linear Algebra', cr: 3 }, { name: 'Theory of Automata and Formal Languages (TA)', cr: 3 },
+      { name: 'Introduction to Artificial Intelligence', cr: 2 }, { name: 'Introduction to AI LAB', cr: 1 },
+      { name: 'Information Security', cr: 2 }, { name: 'Information Security LAB', cr: 1 },
+      { name: 'HCI & Computer Graphics', cr: 2 }, { name: 'HCI & Computer Graphics LAB', cr: 1 },
+      { name: 'Expository Writing (EW)', cr: 3 }, { name: 'Translation of Al-Quran-IV', cr: 0 }
+    ],
+    5: [
+      { name: 'Multivariable Calculus', cr: 3 }, { name: 'Computer Architecture', cr: 2 }, { name: 'Computer Architecture LAB', cr: 1 },
+      { name: 'Operating Systems (OS)', cr: 2 }, { name: 'Operating Systems LAB', cr: 1 },
+      { name: 'Design and Analysis of Algorithms', cr: 3 }, { name: 'CS Elective I', cr: 3 }, { name: 'CS Elective II', cr: 3 }, { name: 'Translation of Al-Quran-V', cr: 0 }
+    ],
+    6: [
+      { name: 'Compiler Construction', cr: 2 }, { name: 'Compiler Construction LAB', cr: 1 },
+      { name: 'Parallel and Distributed Computing', cr: 2 }, { name: 'Parallel Computing LAB', cr: 1 },
+      { name: 'CS Elective III', cr: 3 }, { name: 'CS Elective IV', cr: 3 }, { name: 'Financial Accounting', cr: 3 }, { name: 'Introduction to Textiles', cr: 2 }, { name: 'Translation of Al-Quran-VI', cr: 0 }
+    ],
+    7: [
+      { name: 'BS Final Project-I (FYP-1)', cr: 2 }, { name: 'Advanced Database Systems', cr: 2 }, { name: 'Advanced Database Systems LAB', cr: 1 },
+      { name: 'CS Elective V', cr: 3 }, { name: 'CS Elective VI', cr: 3 }, { name: 'Technical and Business Writing', cr: 3 }, { name: 'Entrepreneurship', cr: 2 }, { name: 'Ideology and Constitution of Pakistan', cr: 2 }, { name: 'Translation of Al-Quran-VII', cr: 0 }
+    ],
+    8: [
+      { name: 'BS Final Project-II', cr: 4 }, { name: 'CS Elective VII', cr: 3 }, { name: 'Civics & Community Engagement', cr: 2 }, { name: 'Professional Practices', cr: 2 }, { name: 'Translation of Al-Quran-VIII', cr: 0 }
+    ]
+  },
+
+  'BS SE': {
+    1: [
+      { name: 'Physics for Computing', cr: 2 }, { name: 'Physics for Computing LAB', cr: 1 },
+      { name: 'Programming Fundamentals (PF)', cr: 3 }, { name: 'Programming Fundamentals LAB', cr: 1 },
+      { name: 'Functional English (FE)', cr: 3 }, { name: 'Introduction to ICT', cr: 2 },
+      { name: 'Introduction to ICT LAB', cr: 1 }, { name: 'Discrete Structures', cr: 3 }, { name: 'Translation of Al-Quran-I', cr: 0 }
+    ],
+    2: [
+      { name: 'Probability and Statistics', cr: 3 }, { name: 'Fundamentals of Management', cr: 2 },
+      { name: 'Database Systems', cr: 3 }, { name: 'Database Systems LAB', cr: 1 },
+      { name: 'Digital Logic Design (DLD)', cr: 2 }, { name: 'Digital Logic Design LAB', cr: 1 },
+      { name: 'Object Oriented Programming (OOP)', cr: 3 }, { name: 'Object Oriented Programming LAB', cr: 1 },
+      { name: 'Islamic Studies', cr: 2 }, { name: 'Translation of Al-Quran-II', cr: 0 }
+    ],
+    3: [
+      { name: 'Calculus and Analytic Geometry (CAG)', cr: 3 }, { name: 'Data Structures (DS)', cr: 3 },
+      { name: 'Data Structures LAB', cr: 1 }, { name: 'Data Communication and Networks', cr: 2 },
+      { name: 'Data Communication and Networks LAB', cr: 1 }, { name: 'Computer Organization & Assembly Language', cr: 2 },
+      { name: 'Computer Organization & Assembly LAB', cr: 1 }, { name: 'Software Engineering Fundamentals', cr: 3 }, { name: 'Translation of Al-Quran-III', cr: 0 }
+    ],
+    4: [
+      { name: 'Linear Algebra', cr: 3 }, { name: 'Software Requirement Engineering', cr: 3 }, { name: 'Software Requirement Engineering LAB', cr: 1 },
+      { name: 'Introduction to Artificial Intelligence', cr: 2 }, { name: 'Introduction to AI LAB', cr: 1 },
+      { name: 'Information Security', cr: 2 }, { name: 'Information Security LAB', cr: 1 },
+      { name: 'Software Construction and Development', cr: 2 }, { name: 'Software Construction LAB', cr: 1 },
+      { name: 'Expository Writing (EW)', cr: 3 }, { name: 'Translation of Al-Quran-IV', cr: 0 }
+    ],
+    5: [
+      { name: 'Multivariable Calculus', cr: 3 }, { name: 'Software Project Management', cr: 3 }, { name: 'Software Project Management LAB', cr: 1 },
+      { name: 'Operating Systems (OS)', cr: 2 }, { name: 'Operating Systems LAB', cr: 1 },
+      { name: 'Design and Analysis of Algorithms', cr: 3 }, { name: 'SE Elective I', cr: 3 }, { name: 'SE Elective II', cr: 3 }, { name: 'Translation of Al-Quran-V', cr: 0 }
+    ],
+    6: [
+      { name: 'Software Design & Architecture', cr: 3 }, { name: 'Parallel and Distributed Computing', cr: 2 }, { name: 'Parallel Computing LAB', cr: 1 },
+      { name: 'SE Elective III', cr: 3 }, { name: 'SE Elective IV', cr: 3 }, { name: 'Financial Accounting', cr: 3 }, { name: 'Introduction to Textiles', cr: 2 }, { name: 'Translation of Al-Quran-VI', cr: 0 }
+    ],
+    7: [
+      { name: 'BS Final Project-I (FYP-1)', cr: 2 }, { name: 'Software Quality Engineering', cr: 3 }, { name: 'Software Quality Engineering LAB', cr: 1 },
+      { name: 'SE Elective V', cr: 3 }, { name: 'SE Elective VI', cr: 3 }, { name: 'Technical and Business Writing', cr: 3 }, { name: 'Entrepreneurship', cr: 2 }, { name: 'Ideology and Constitution of Pakistan', cr: 2 }, { name: 'Translation of Al-Quran-VII', cr: 0 }
+    ],
+    8: [
+      { name: 'BS Final Project-II', cr: 4 }, { name: 'SE Elective VII', cr: 3 }, { name: 'Civics & Community Engagement', cr: 2 }, { name: 'Professional Practices', cr: 2 }, { name: 'Translation of Al-Quran-VIII', cr: 0 }
+    ]
+  }
 };
 
 interface Course {
@@ -119,9 +168,10 @@ interface Course {
 }
 
 export function App() {
+  const [selectedProgram, setSelectedProgram] = useState<string>('BS AI');
+  const [selectedSem, setSelectedSem] = useState<number>(1);
   const [courses, setCourses] = useState<Course[]>([]);
   const [targetCGPA, setTargetCGPA] = useState<number>(3.5);
-  const [selectedSem, setSelectedSem] = useState<number>(1);
   const [showGradingModal, setShowGradingModal] = useState<boolean>(false);
   const [inputMode, setInputMode] = useState<'grade' | 'marks'>('grade');
 
@@ -129,7 +179,6 @@ export function App() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Auto-map Marks % to Grade
   const getGradeFromMarks = (marks: number): string => {
     if (marks >= 90) return 'A+';
     if (marks >= 85) return 'A';
@@ -145,16 +194,21 @@ export function App() {
     return 'F';
   };
 
-  const loadSemester = (semNum: number) => {
-    const semCourses = NTU_SCHEME[semNum] || [];
+  const loadSemester = (program: string, semNum: number) => {
+    const semCourses = NTU_PROGRAMS[program]?.[semNum] || [];
     const newCourses = semCourses.map((c, i) => ({
-      id: `${semNum}-${i}-${Date.now()}`,
+      id: `${program}-${semNum}-${i}-${Date.now()}`,
       name: c.name,
       cr: c.cr,
       grade: 'A',
       marks: 88
     }));
     setCourses(newCourses);
+  };
+
+  const handleProgramChange = (prog: string) => {
+    setSelectedProgram(prog);
+    loadSemester(prog, selectedSem);
   };
 
   const updateGrade = (id: string, newGrade: string) => {
@@ -181,7 +235,7 @@ export function App() {
   const neededPoints = (targetCGPA * totalGraduationCredits) - totalQualityPoints;
   const requiredGPA = remainingCredits > 0 ? Math.max(0, neededPoints / remainingCredits) : 0;
 
-  // Groq API Call
+  // AI Advisor Call
   const getAIAdvice = async () => {
     setLoading(true);
     setError(null);
@@ -206,11 +260,11 @@ export function App() {
           messages: [
             {
               role: 'system',
-              content: `You are 'Compass AI', an academic advisor for National Textile University (NTU) BS AI students. Give 3 actionable, empathetic study tips under 150 words based on current CGPA and target.`
+              content: `You are 'Compass AI', academic advisor for NTU Department of Computer Science (${selectedProgram} students, Batch 2025-29). Give 3 short, actionable study tips under 150 words based on transcript standing.`
             },
             {
               role: 'user',
-              content: `Current CGPA: ${currentCGPA.toFixed(2)}, Target CGPA: ${targetCGPA.toFixed(2)}, Remaining Credits: ${remainingCredits}, Required Future GPA: ${requiredGPA.toFixed(2)}.`
+              content: `Program: ${selectedProgram}, Current CGPA: ${currentCGPA.toFixed(2)}, Target CGPA: ${targetCGPA.toFixed(2)}, Remaining Credits: ${remainingCredits}, Required Future GPA: ${requiredGPA.toFixed(2)}.`
             }
           ],
           temperature: 0.7,
@@ -240,10 +294,10 @@ export function App() {
         <header className="flex flex-col md:flex-row justify-between items-center bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-2xl">
           <div>
             <h1 className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent flex items-center gap-2">
-              🎓 NTU GPA Compass
+              🎓 NTU DCS Academic Compass
             </h1>
             <p className="text-slate-400 text-xs mt-1">
-              National Textile University — BS AI (Batch 2025–29) Official Grading & Predictor
+              National Textile University — Dept of Computer Science (Batch 2025–29)
             </p>
           </div>
 
@@ -261,25 +315,39 @@ export function App() {
           </div>
         </header>
 
-        {/* Course Scheme Loader & Toggle */}
+        {/* Degree & Scheme Selection Bar */}
         <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-4">
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-2">
-              <BookOpen className="w-5 h-5 text-indigo-400" />
-              <h2 className="text-base font-semibold">Load NTU BS AI Semester Courses</h2>
-            </div>
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
             
-            <div className="flex items-center gap-3">
-              <div className="bg-slate-800 p-1 rounded-xl flex gap-1 text-xs">
+            {/* Degree Selector */}
+            <div className="flex items-center gap-2">
+              <Layers className="w-5 h-5 text-indigo-400 shrink-0" />
+              <span className="text-xs font-semibold text-slate-300">Degree Program:</span>
+              <div className="flex bg-slate-800 p-1 rounded-xl border border-slate-700">
+                {['BS AI', 'BS CS', 'BS SE'].map(prog => (
+                  <button
+                    key={prog}
+                    onClick={() => handleProgramChange(prog)}
+                    className={`px-3 py-1 text-xs font-bold rounded-lg transition ${selectedProgram === prog ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}
+                  >
+                    {prog}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Input Mode & Semester Loader */}
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="bg-slate-800 p-1 rounded-xl flex gap-1 text-xs border border-slate-700">
                 <button
                   onClick={() => setInputMode('grade')}
-                  className={`px-3 py-1 rounded-lg font-medium transition ${inputMode === 'grade' ? 'bg-indigo-600 text-white' : 'text-slate-400'}`}
+                  className={`px-2.5 py-1 rounded-lg font-medium transition ${inputMode === 'grade' ? 'bg-indigo-600 text-white' : 'text-slate-400'}`}
                 >
                   Grade Mode
                 </button>
                 <button
                   onClick={() => setInputMode('marks')}
-                  className={`px-3 py-1 rounded-lg font-medium transition ${inputMode === 'marks' ? 'bg-indigo-600 text-white' : 'text-slate-400'}`}
+                  className={`px-2.5 py-1 rounded-lg font-medium transition ${inputMode === 'marks' ? 'bg-indigo-600 text-white' : 'text-slate-400'}`}
                 >
                   Marks % Mode
                 </button>
@@ -288,17 +356,18 @@ export function App() {
               <select
                 value={selectedSem}
                 onChange={(e) => setSelectedSem(Number(e.target.value))}
-                className="bg-slate-800 border border-slate-700 rounded-xl px-3 py-1.5 text-sm text-white focus:outline-none"
+                className="bg-slate-800 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none"
               >
                 {[1, 2, 3, 4, 5, 6, 7, 8].map(s => (
                   <option key={s} value={s}>Semester {s}</option>
                 ))}
               </select>
+
               <button
-                onClick={() => loadSemester(selectedSem)}
+                onClick={() => loadSemester(selectedProgram, selectedSem)}
                 className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-indigo-500/20"
               >
-                <RefreshCw className="w-3.5 h-3.5" /> Load
+                <RefreshCw className="w-3.5 h-3.5" /> Load Scheme
               </button>
             </div>
           </div>
@@ -353,7 +422,7 @@ export function App() {
             onClick={addCustomCourse}
             className="text-xs text-indigo-400 hover:text-indigo-300 font-medium underline block pt-2"
           >
-            + Add Custom Subject
+            + Add Custom Subject Manually
           </button>
         </div>
 
@@ -363,7 +432,7 @@ export function App() {
           {/* Target Predictor Card */}
           <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-4">
             <h2 className="text-base font-semibold text-white flex items-center gap-2">
-              <Calculator className="w-5 h-5 text-purple-400" /> Target CGPA Predictor
+              <Calculator className="w-5 h-5 text-purple-400" /> Target CGPA Predictor ({selectedProgram})
             </h2>
 
             <div className="space-y-3">
@@ -422,7 +491,7 @@ export function App() {
                 <h3 className="text-base font-semibold text-white flex items-center gap-2">
                   Compass AI Advisor <Sparkles className="w-4 h-4 text-amber-400" />
                 </h3>
-                <p className="text-xs text-slate-400">Powered by Groq Llama-3 AI</p>
+                <p className="text-xs text-slate-400">Customized for {selectedProgram} (Batch 2025–29)</p>
               </div>
             </div>
 
@@ -434,7 +503,7 @@ export function App() {
               {loading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  Analyzing Transcript...
+                  Analyzing {selectedProgram} Transcript...
                 </>
               ) : (
                 <>
@@ -453,7 +522,7 @@ export function App() {
 
             {advice && (
               <div className="p-4 bg-slate-800/60 border border-indigo-500/30 rounded-xl text-slate-200 text-xs leading-relaxed space-y-2">
-                <div className="font-semibold text-indigo-400 text-[10px] uppercase tracking-wider">Advisor Notes:</div>
+                <div className="font-semibold text-indigo-400 text-[10px] uppercase tracking-wider">Advisor Notes ({selectedProgram}):</div>
                 <div className="whitespace-pre-line">{advice}</div>
               </div>
             )}
@@ -461,7 +530,7 @@ export function App() {
 
         </div>
 
-        {/* NTU Grading Policy Table Modal */}
+        {/* NTU Grading Policy Modal */}
         {showGradingModal && (
           <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 space-y-4 max-h-[85vh] overflow-y-auto">
